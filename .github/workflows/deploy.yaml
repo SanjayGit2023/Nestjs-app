@@ -21,7 +21,7 @@ jobs:
 
       - name: SSH into EC2 instance and deploy
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/Downloads/nestkey.pem ubuntu@34.232.78.155 << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i ~/Downloads/nestkey ubuntu@34.232.78.155 << 'EOF'
             cd hello-world-app
 
             git pull origin main
