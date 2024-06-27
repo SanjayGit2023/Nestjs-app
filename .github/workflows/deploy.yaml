@@ -1,31 +1,28 @@
-name: Deploy to AWS EC2
+name: Pipeline for EC2 Deployment
 
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Install SSH key
-        uses: webfactory/ssh-agent@v0.5.3
+    steps:    
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
         with:
-          ssh-private-key: |
-            ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: SSH into EC2 instance and deploy
-        run: |
-          ssh -o StrictHostKeyChecking=no -i ~/Downloads/nestkey ubuntu@34.232.78.155 << 'EOF'
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH }}
+          port: 22
+          degub: true
+          script: | 
+            sudo apt update -y
+            sudo apt install nodejs npm -y
+            git clone https://github.com/SanjayGit2023/Nestjs-app.git
             cd hello-world-app
-
-            git pull origin main
             npm install
-            npm run build
-            pm2 restart all
-          EOF
+            npm start > app.log 2>&1 &
+            echo "Application Started"
