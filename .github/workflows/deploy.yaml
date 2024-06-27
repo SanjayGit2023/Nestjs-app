@@ -1,0 +1,30 @@
+name: Deploy to AWS EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: |
+            ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: SSH into EC2 instance and deploy
+        run: |
+          ssh -o StrictHostKeyChecking=no -i path/to/nestkey.pem ubuntu@34.232.78.155 << 'EOF'
+            cd /path/to/your/nextjs/app
+            git pull origin main
+            npm install
+            npm run build
+            pm2 restart all
+          EOF
