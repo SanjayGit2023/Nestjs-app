@@ -3,7 +3,7 @@ name: Pipeline for EC2 Deployment
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
